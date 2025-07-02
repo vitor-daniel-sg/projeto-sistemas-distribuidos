@@ -3,11 +3,19 @@ const nodesKey = 'nodos';
 const totalKey = 'totalReqs';
 const latencyKey = 'totalLatency';
 
-let nodes = JSON.parse(localStorage.getItem(nodesKey)) || [
-  { name: 'Nó 1', up: true, count: 0, totalLatency: 0 },
-  { name: 'Nó 2', up: true, count: 0, totalLatency: 0 },
-  { name: 'Nó 3', up: true, count: 0, totalLatency: 0 }
+const defaultNodes = [
+  { name: 'Nó 1', up: true, count: 0, totalLatency: 0, offset:    0    },
+  { name: 'Nó 2', up: true, count: 0, totalLatency: 0, offset: -120000 },
+  { name: 'Nó 3', up: true, count: 0, totalLatency: 0, offset:   90000 }
 ];
+
+const stored = JSON.parse(localStorage.getItem(nodesKey)) || [];
+
+let nodes = defaultNodes.map((padrao, i) => ({
+  ...padrao,
+  ...(stored[i] || {})  // sobrescreve com os dados antigos (sem apagar o offset do padrão)
+}));
+
 let currentNode = 0;
 let totalRequests = parseInt(localStorage.getItem(totalKey)) || 0;
 let totalLatency = parseFloat(localStorage.getItem(latencyKey)) || 0;
@@ -42,6 +50,12 @@ function toggleNode(idx) {
   salvarEstado();
 }
 
+function getHoraDoNo(node) {
+  const agora = Date.now();
+  const ajustada = new Date(agora + (node.offset || 0));
+  return ajustada.toLocaleTimeString(); 
+}
+
 function enviarRequisicao(origem = '') {
   let tentativas = 0;
   while (!nodes[currentNode].up && tentativas < nodes.length) {
@@ -69,7 +83,10 @@ function enviarRequisicao(origem = '') {
     if (nodeDiv) nodeDiv.textContent = node.count;
 
     if (statusEl) {
-      statusEl.textContent = `Status: ${origem} resposta de ${node.name} em ${Math.round(latency)}ms`;
+      const hora = getHoraDoNo(node);
+      statusEl.textContent =
+        `Status: ${origem} resposta de ${node.name} em ${Math.round(latency)}ms    ` +
+        `(Hora do nó: ${hora})`;
     }
 
     salvarEstado();
