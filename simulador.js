@@ -52,7 +52,7 @@ function enviarRequisicao(origem = '') {
   const statusEl = document.getElementById('status');
   if (!nodes[currentNode].up) {
     if (statusEl) statusEl.textContent = 'Status: nenhum nó disponível!';
-    return;
+    return false; // ⛔ sem nós disponíveis
   }
 
   const latency = 100 + Math.random() * 400;
@@ -76,7 +76,10 @@ function enviarRequisicao(origem = '') {
     updateMetrics();
     currentNode = (currentNode + 1) % nodes.length;
   }, latency);
+
+  return true; 
 }
+
 
 function updateMetrics() {
   const avg = totalRequests === 0 ? 0 : Math.round(totalLatency / totalRequests);
@@ -85,3 +88,16 @@ function updateMetrics() {
   if (totalEl) totalEl.textContent = totalRequests;
   if (avgEl) avgEl.textContent = avg;
 }
+
+function resetarMetricas() {
+  totalRequests = 0;
+  totalLatency = 0;
+  localStorage.setItem(totalKey, totalRequests);
+  localStorage.setItem(latencyKey, totalLatency);
+  updateMetrics();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initSimulador();
+  resetarMetricas(); // Zera ao abrir
+});

@@ -7,13 +7,20 @@
 </head>
 <body>
   <!-- Menu e Busca existentes -->
-  <div class="menu-icon" onclick="toggleMenu()">☰</div>
+  <!-- Topo do site -->
   <div class="top-bar">
-    <h1>Busca de objetos</h1>
+    <span class="logo">🚌 Achados & Bus</span>
   </div>
+
+  <!-- Nova barra de navegação -->
+  <nav class="nav-bar">
+    <a href="cadastro.html">Cadastro</a>
+    <a href="busca.html" class="active">Busca</a>
+  </nav>
+
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="Pesquise seu objeto perdido aqui...">
-    <button onclick="pesquisar()">Pesquisar</button>
+    <button onclick="pesquisar(); enviarRequisicao('Busca')">Pesquisar</button>
   </div>
   <div id="resultados" class="result-box">Nenhum resultado encontrado.</div>
 
@@ -24,7 +31,6 @@
       <!-- Nós serão criados via JS -->
     </div>
     <div class="controls">
-      <button onclick="pesquisar(); enviarRequisicao('Busca')">Pesquisar</button>
       <span id="status">Status: pronto</span>
     </div>
     <div id="metrics">
